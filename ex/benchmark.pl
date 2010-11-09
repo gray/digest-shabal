@@ -6,13 +6,18 @@ use Benchmark qw(timethese);
 use Getopt::Long qw(GetOptions :config no_ignore_case);
 use List::Util qw(max);
 
-use Digest            ();
 use Digest::BLAKE     ();
 use Digest::BMW       ();
+use Digest::CubeHash  ();
+use Digest::ECHO      ();
+use Digest::Fugue     ();
+use Digest::JH        ();
+use Digest::Keccak    ();
+use Digest::Luffa     ();
 use Digest::MD5       ();
 use Digest::MD6       ();
-use Digest::CubeHash  ();
 use Digest::SHA       ();
+use Digest::SIMD      ();
 use Digest::Shabal    ();
 use Digest::Skein     ();
 use Digest::Whirlpool ();
@@ -38,6 +43,26 @@ my %digests = (
     cubehash_256 => sub { Digest::CubeHash::cubehash_256($data) },
     cubehash_384 => sub { Digest::CubeHash::cubehash_384($data) },
     cubehash_512 => sub { Digest::CubeHash::cubehash_512($data) },
+    echo_224     => sub { Digest::ECHO::echo_224($data) },
+    echo_256     => sub { Digest::ECHO::echo_256($data) },
+    echo_384     => sub { Digest::ECHO::echo_384($data) },
+    echo_512     => sub { Digest::ECHO::echo_512($data) },
+    keccak_224   => sub { Digest::Keccak::keccak_224($data) },
+    fugue_224    => sub { Digest::Fugue::fugue_224($data) },
+    fugue_256    => sub { Digest::Fugue::fugue_256($data) },
+    fugue_384    => sub { Digest::Fugue::fugue_384($data) },
+    fugue_512    => sub { Digest::Fugue::fugue_512($data) },
+    jh_224       => sub { Digest::JH::jh_224($data) },
+    jh_256       => sub { Digest::JH::jh_256($data) },
+    jh_384       => sub { Digest::JH::jh_384($data) },
+    jh_512       => sub { Digest::JH::jh_512($data) },
+    keccak_256   => sub { Digest::Keccak::keccak_256($data) },
+    keccak_384   => sub { Digest::Keccak::keccak_384($data) },
+    keccak_512   => sub { Digest::Keccak::keccak_512($data) },
+    luffa_224    => sub { Digest::Luffa::luffa_224($data) },
+    luffa_256    => sub { Digest::Luffa::luffa_256($data) },
+    luffa_384    => sub { Digest::Luffa::luffa_384($data) },
+    luffa_512    => sub { Digest::Luffa::luffa_512($data) },
     md5          => sub { Digest::MD5::md5($data) },
     md6_224      => sub { Digest::MD6::md6_224($data) },
     md6_256      => sub { Digest::MD6::md6_256($data) },
@@ -48,6 +73,10 @@ my %digests = (
     sha_384      => sub { Digest::SHA::sha256($data) },
     sha_256      => sub { Digest::SHA::sha384($data) },
     sha_512      => sub { Digest::SHA::sha512($data) },
+    simd_224     => sub { Digest::SIMD::simd_224($data) },
+    simd_256     => sub { Digest::SIMD::simd_256($data) },
+    simd_384     => sub { Digest::SIMD::simd_384($data) },
+    simd_512     => sub { Digest::SIMD::simd_512($data) },
     shabal_224   => sub { Digest::Shabal::shabal_224($data) },
     shabal_256   => sub { Digest::Shabal::shabal_256($data) },
     shabal_384   => sub { Digest::Shabal::shabal_384($data) },
@@ -55,7 +84,7 @@ my %digests = (
     skein_256    => sub { Digest::Skein::skein_256($data) },
     skein_512    => sub { Digest::Skein::skein_512($data) },
     skein_1024   => sub { Digest::Skein::skein_1024($data) },
-    whirlpool    => sub { Digest->new('Whirlpool')->add($data)->digest },
+    whirlpool    => sub { Digest::Whirlpool->new->add($data)->digest },
 );
 
 my $times = timethese -1, \%digests, 'none';
