@@ -1,0 +1,9 @@
+Digest-Shabal-*
+MANIFEST.bak
+Makefile
+Makefile.old
+Shabal.bs
+Shabal.c
+Shabal.o
+blib/
+pm_to_blib
