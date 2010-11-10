@@ -52,6 +52,14 @@ sub shabal_512_base64 {
     return $b64;
 }
 
+sub add_bits {
+    my ($self, $data, $bits) = @_;
+    if (2 == @_) {
+        return $self->_add_bits(pack('B*', $data), length $data);
+    }
+    return $self->_add_bits($data, $bits);
+}
+
 
 1;
 
