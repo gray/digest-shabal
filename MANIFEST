@@ -12,6 +12,11 @@ src/shabal.c
 src/sph_shabal.h
 src/sph_types.h
 t/00_load.t
+t/01_new.t
+t/224.t
+t/256.t
+t/384.t
+t/512.t
 typemap
 xt/kwalitee.t
 xt/leaktrace.t

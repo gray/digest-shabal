@@ -1,4 +1,7 @@
 Revision history for Digest-Shabal
 
+0.02  Wed Nov 10 05:32:39 UTC 2010
+    - Updated add_bits to accept bit strings that are not a multiple of 8.
+
 0.01  Mon Nov  8 20:56:35 UTC 2010
     - Initial distribution.
