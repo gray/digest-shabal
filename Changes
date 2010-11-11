@@ -1,5 +1,8 @@
 Revision history for Digest-Shabal
 
+0.03  Thu Nov 11 19:16:03 UTC 2010
+    - Fixed reset method.
+
 0.02  Wed Nov 10 05:32:39 UTC 2010
     - Updated add_bits to accept bit strings that are not a multiple of 8.
 
