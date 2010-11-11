@@ -63,6 +63,14 @@ CODE:
 OUTPUT:
     RETVAL
 
+void
+reset (self)
+    Digest::Shabal self
+PPCODE:
+    if (Init(self, self->hashbitlen) != SUCCESS)
+        XSRETURN_UNDEF;
+    XSRETURN(1);
+
 int
 hashsize(self)
     Digest::Shabal self
