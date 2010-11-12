@@ -11,6 +11,7 @@ use Digest::BMW       ();
 use Digest::CubeHash  ();
 use Digest::ECHO      ();
 use Digest::Fugue     ();
+use Digest::Hamsi     ();
 use Digest::JH        ();
 use Digest::Keccak    ();
 use Digest::Luffa     ();
@@ -18,6 +19,7 @@ use Digest::MD5       ();
 use Digest::MD6       ();
 use Digest::SHA       ();
 use Digest::SIMD      ();
+use Digest::SHAvite3  ();
 use Digest::Shabal    ();
 use Digest::Skein     ();
 use Digest::Whirlpool ();
@@ -47,15 +49,19 @@ my %digests = (
     echo_256     => sub { Digest::ECHO::echo_256($data) },
     echo_384     => sub { Digest::ECHO::echo_384($data) },
     echo_512     => sub { Digest::ECHO::echo_512($data) },
-    keccak_224   => sub { Digest::Keccak::keccak_224($data) },
     fugue_224    => sub { Digest::Fugue::fugue_224($data) },
     fugue_256    => sub { Digest::Fugue::fugue_256($data) },
     fugue_384    => sub { Digest::Fugue::fugue_384($data) },
     fugue_512    => sub { Digest::Fugue::fugue_512($data) },
+    hamsi_224    => sub { Digest::Hamsi::hamsi_224($data) },
+    hamsi_256    => sub { Digest::Hamsi::hamsi_256($data) },
+    hamsi_384    => sub { Digest::Hamsi::hamsi_384($data) },
+    hamsi_512    => sub { Digest::Hamsi::hamsi_512($data) },
     jh_224       => sub { Digest::JH::jh_224($data) },
     jh_256       => sub { Digest::JH::jh_256($data) },
     jh_384       => sub { Digest::JH::jh_384($data) },
     jh_512       => sub { Digest::JH::jh_512($data) },
+    keccak_224   => sub { Digest::Keccak::keccak_224($data) },
     keccak_256   => sub { Digest::Keccak::keccak_256($data) },
     keccak_384   => sub { Digest::Keccak::keccak_384($data) },
     keccak_512   => sub { Digest::Keccak::keccak_512($data) },
@@ -70,17 +76,21 @@ my %digests = (
     md6_512      => sub { Digest::MD6::md6_512($data) },
     sha1         => sub { Digest::SHA::sha1($data) },
     sha_224      => sub { Digest::SHA::sha224($data) },
-    sha_384      => sub { Digest::SHA::sha256($data) },
     sha_256      => sub { Digest::SHA::sha384($data) },
+    sha_384      => sub { Digest::SHA::sha256($data) },
     sha_512      => sub { Digest::SHA::sha512($data) },
-    simd_224     => sub { Digest::SIMD::simd_224($data) },
-    simd_256     => sub { Digest::SIMD::simd_256($data) },
-    simd_384     => sub { Digest::SIMD::simd_384($data) },
-    simd_512     => sub { Digest::SIMD::simd_512($data) },
     shabal_224   => sub { Digest::Shabal::shabal_224($data) },
     shabal_256   => sub { Digest::Shabal::shabal_256($data) },
     shabal_384   => sub { Digest::Shabal::shabal_384($data) },
     shabal_512   => sub { Digest::Shabal::shabal_512($data) },
+    shavite3_224 => sub { Digest::SHAvite3::shavite3_224($data) },
+    shavite3_256 => sub { Digest::SHAvite3::shavite3_256($data) },
+    shavite3_384 => sub { Digest::SHAvite3::shavite3_384($data) },
+    shavite3_512 => sub { Digest::SHAvite3::shavite3_512($data) },
+    simd_224     => sub { Digest::SIMD::simd_224($data) },
+    simd_256     => sub { Digest::SIMD::simd_256($data) },
+    simd_384     => sub { Digest::SIMD::simd_384($data) },
+    simd_512     => sub { Digest::SIMD::simd_512($data) },
     skein_256    => sub { Digest::Skein::skein_256($data) },
     skein_512    => sub { Digest::Skein::skein_512($data) },
     skein_1024   => sub { Digest::Skein::skein_1024($data) },
