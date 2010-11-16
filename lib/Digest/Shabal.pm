@@ -75,8 +75,8 @@ Digest::Shabal - Perl interface to the Shabal digest algorithm
     use Digest::Shabal qw(shabal_256 shabal_256_hex shabal_256_base64);
 
     $digest = shabal_256($data);
-    $digest = shabal_hex_256($data);
-    $digest = shabal_base64_256($data);
+    $digest = shabal_256_hex($data);
+    $digest = shabal_256_base64($data);
 
     # Object-oriented interface
     use Digest::Shabal;
