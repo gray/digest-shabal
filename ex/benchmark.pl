@@ -114,7 +114,7 @@ while (my ($name, $info) = each %$times) {
     $max_bw_len   = max $max_bw_len,   length($bw);
 }
 
-for my $rec (sort { $a->[1] <=> $b->[1] } @info) {
+for my $rec (sort { $b->[1] <=> $a->[1] } @info) {
     my ($name, $rate, $bw) = @$rec;
 
     my $name_padding = $max_name_len - length($name);
@@ -122,4 +122,3 @@ for my $rec (sort { $a->[1] <=> $b->[1] } @info) {
     printf "%s%s %${max_rate_len}s/s  %${max_bw_len}s MB/s\n",
         $name, ' 'x$name_padding, $rate, $bw;
 }
-
