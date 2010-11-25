@@ -6,27 +6,37 @@ use Benchmark qw(timethese);
 use Getopt::Long qw(GetOptions :config no_ignore_case);
 use List::Util qw(max);
 
-use Digest::BLAKE     ();
-use Digest::BMW       ();
-use Digest::CubeHash  ();
-use Digest::ECHO      ();
-use Digest::Fugue     ();
-use Digest::Hamsi     ();
-use Digest::JH        ();
-use Digest::Keccak    ();
-use Digest::Luffa     ();
-use Digest::MD5       ();
-use Digest::MD6       ();
-use Digest::SHA       ();
-use Digest::SIMD      ();
-use Digest::SHAvite3  ();
-use Digest::Shabal    ();
-use Digest::Skein     ();
-use Digest::Whirlpool ();
+# Install Task::Digest
+use Crypt::RIPEMD160      ();
+use Digest::BLAKE         ();
+use Digest::BMW           ();
+use Digest::CubeHash      ();
+use Digest::ECHO          ();
+use Digest::Fugue         ();
+use Digest::GOST          ();
+use Digest::Groestl       ();
+use Digest::Hamsi         ();
+use Digest::JH            ();
+use Digest::Keccak        ();
+use Digest::Luffa         ();
+use Digest::MD2           ();
+use Digest::MD4           ();
+use Digest::MD5           ();
+use Digest::MD6           ();
+use Digest::Perl::MD4     ();
+use Digest::Perl::MD5     ();
+use Digest::SHA           ();
+use Digest::SHA1          ();
+use Digest::SHA::PurePerl ();
+use Digest::SHAvite3      ();
+use Digest::SIMD          ();
+use Digest::Shabal        ();
+use Digest::Skein         ();
+use Digest::Whirlpool     ();
 
 my %opts = (
     iterations => -1,
-    size       => 1,  # KB
+    size       => 1,  # kB
 );
 GetOptions(\%opts, 'iterations|i=i', 'size|s=f',);
 
@@ -53,6 +63,11 @@ my %digests = (
     fugue_256    => sub { Digest::Fugue::fugue_256($data) },
     fugue_384    => sub { Digest::Fugue::fugue_384($data) },
     fugue_512    => sub { Digest::Fugue::fugue_512($data) },
+    gost         => sub { Digest::GOST::gost($data) },
+    groestl_224  => sub { Digest::Groestl::groestl_224($data) },
+    groestl_256  => sub { Digest::Groestl::groestl_256($data) },
+    groestl_384  => sub { Digest::Groestl::groestl_384($data) },
+    groestl_512  => sub { Digest::Groestl::groestl_512($data) },
     hamsi_224    => sub { Digest::Hamsi::hamsi_224($data) },
     hamsi_256    => sub { Digest::Hamsi::hamsi_256($data) },
     hamsi_384    => sub { Digest::Hamsi::hamsi_384($data) },
@@ -69,12 +84,25 @@ my %digests = (
     luffa_256    => sub { Digest::Luffa::luffa_256($data) },
     luffa_384    => sub { Digest::Luffa::luffa_384($data) },
     luffa_512    => sub { Digest::Luffa::luffa_512($data) },
+    md2          => sub { Digest::MD2::md2($data) },
+    md4          => sub { Digest::MD4::md4($data) },
     md5          => sub { Digest::MD5::md5($data) },
     md6_224      => sub { Digest::MD6::md6_224($data) },
     md6_256      => sub { Digest::MD6::md6_256($data) },
     md6_384      => sub { Digest::MD6::md6_384($data) },
     md6_512      => sub { Digest::MD6::md6_512($data) },
-    sha1         => sub { Digest::SHA::sha1($data) },
+    perl_md4     => sub { Digest::Perl::MD4::md4($data) },
+    perl_md5     => sub { Digest::Perl::MD4::md4($data) },
+    perl_sha_1   => sub { Digest::SHA::PurePerl::sha1($data) },
+    perl_sha_224 => sub { Digest::SHA::PurePerl::sha224($data) },
+    perl_sha_256 => sub { Digest::SHA::PurePerl::sha256($data) },
+    perl_sha_384 => sub { Digest::SHA::PurePerl::sha384($data) },
+    perl_sha_512 => sub { Digest::SHA::PurePerl::sha512($data) },
+    ripemd_160   => sub {
+        my $c = Crypt::RIPEMD160->new; $c->add($data); $c->digest;
+    },
+    sha1_sha_1   => sub { Digest::SHA1::sha1($data) },
+    sha_sha_1    => sub { Digest::SHA::sha1($data) },
     sha_224      => sub { Digest::SHA::sha224($data) },
     sha_256      => sub { Digest::SHA::sha384($data) },
     sha_384      => sub { Digest::SHA::sha256($data) },
@@ -105,7 +133,8 @@ my ($max_name_len, $max_rate_len, $max_bw_len) = (0, 0, 0);
 while (my ($name, $info) = each %$times) {
     my ($duration, $cycles) = @{$info}[ 1, 5 ];
     my $rate = sprintf '%.0f', $cycles / $duration;
-    my $bw   = sprintf '%.0f', $rate * $opts{size} / 1024;
+    my $bw = $rate * $opts{size} / 1024;
+    $bw = sprintf int $bw ? '%.0f' : '%.2f', $bw;
 
     push @info, [$name, $rate, $bw];
 
