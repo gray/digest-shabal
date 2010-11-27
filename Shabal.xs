@@ -125,6 +125,7 @@ CODE:
     if (Final(self, result) != SUCCESS)
         XSRETURN_UNDEF;
     RETVAL = newSVpv(result, self->hashbitlen >> 3);
+    Init(self, self->hashbitlen);
     Safefree(result);
 OUTPUT:
     RETVAL
