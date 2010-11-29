@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use parent qw(Exporter Digest::base);
 
-use MIME::Base64 ();
-
 our $VERSION = '0.04';
 $VERSION = eval $VERSION;
 
