@@ -25,33 +25,6 @@ our @EXPORT_OK = qw(
     shabal_512 shabal_512_hex shabal_512_base64
 );
 
-# TODO: convert to C.
-sub shabal_224_hex  { unpack 'H*', shabal_224(@_) }
-sub shabal_256_hex  { unpack 'H*', shabal_256(@_) }
-sub shabal_384_hex  { unpack 'H*', shabal_384(@_) }
-sub shabal_512_hex  { unpack 'H*', shabal_512(@_) }
-
-sub shabal_224_base64 {
-    my $b64 = MIME::Base64::encode(shabal_224(@_), '');
-    $b64 =~ s/=+$//g;
-    return $b64;
-}
-sub shabal_256_base64 {
-    my $b64 = MIME::Base64::encode(shabal_256(@_), '');
-    $b64 =~ s/=+$//g;
-    return $b64;
-}
-sub shabal_384_base64 {
-    my $b64 = MIME::Base64::encode(shabal_384(@_), '');
-    $b64 =~ s/=+$//g;
-    return $b64;
-}
-sub shabal_512_base64 {
-    my $b64 = MIME::Base64::encode(shabal_512(@_), '');
-    $b64 =~ s/=+$//g;
-    return $b64;
-}
-
 sub add_bits {
     my ($self, $data, $bits) = @_;
     if (2 == @_) {

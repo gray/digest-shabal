@@ -8,40 +8,110 @@
 #include "src/sha3nist.c"
 #include "src/shabal.c"
 
+static int
+hex_encode (char *dest, const char *src, int len) {
+    static const char hex[] = "0123456789abcdef";
+    char *p = dest;
+    const unsigned char *s = src;
+    for (; len--; s++) {
+        *p++ = hex[s[0] >> 4];
+        *p++ = hex[s[0] & 0x0f];
+    }
+    return (int)(p - dest);
+}
+
+static int
+base64_encode (char *dest, const char *src, int len) {
+    static const char b64[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    char *p = dest;
+    const unsigned char *s = src;
+    const unsigned char *end = (const unsigned char *)src + len - 2;
+
+    for (; s < end; s += 3) {
+        *p++ = b64[s[0] >> 2];
+        *p++ = b64[((s[0] & 3) << 4) + (s[1] >> 4)];
+        *p++ = b64[((s[1] & 0xf) << 2) + (s[2] >> 6)];
+        *p++ = b64[s[2] & 0x3f];
+    }
+    switch (len % 3) {
+    case 1:
+        *p++ = b64[s[0] >> 2];
+        *p++ = b64[(s[0] & 3) << 4];
+        break;
+    case 2:
+        *p++ = b64[s[0] >> 2];
+        *p++ = b64[((s[0] & 3) << 4) + (s[1] >> 4)];
+        *p++ = b64[((s[1] & 0xf) << 2)];
+        break;
+    }
+    return (int)(p - dest);
+}
+
+static SV *
+make_mortal_sv(pTHX_ const unsigned char *src, int bitlen, int enc) {
+    char result[128];
+    char *ret;
+    int len = bitlen >> 3;
+
+    switch (enc) {
+    case 0:
+        ret = (char *)src;
+        break;
+    case 1:
+        len = hex_encode(result, src, len);
+        ret = result;
+        break;
+    case 2:
+        len = base64_encode(result, src, len);
+        ret = result;
+        break;
+    }
+    return sv_2mortal(newSVpv(ret, len));
+}
+
 typedef hashState *Digest__Shabal;
 
 MODULE = Digest::Shabal    PACKAGE = Digest::Shabal
 
 PROTOTYPES: ENABLE
 
-SV *
+void
 shabal_224 (...)
 ALIAS:
-    shabal_224 = 224
-    shabal_256 = 256
-    shabal_384 = 384
-    shabal_512 = 512
+    shabal_224 = 0
+    shabal_224_hex = 1
+    shabal_224_base64 = 2
+    shabal_256 = 3
+    shabal_256_hex = 4
+    shabal_256_base64 = 5
+    shabal_384 = 6
+    shabal_384_hex = 7
+    shabal_384_base64 = 8
+    shabal_512 = 9
+    shabal_512_hex = 10
+    shabal_512_base64 = 11
 PREINIT:
     hashState ctx;
-    int i;
+    int bitlen, i;
     unsigned char *data;
-    unsigned char *result;
     STRLEN len;
+    unsigned char result[64];
 CODE:
-    if (Init(&ctx, ix) != SUCCESS)
+    static const int ix2bits[] =
+        {224, 224, 224, 256, 256, 256, 384, 384, 384, 512, 512, 512};
+    bitlen = ix2bits[ix];
+    if (Init(&ctx, bitlen) != SUCCESS)
         XSRETURN_UNDEF;
     for (i = 0; i < items; i++) {
         data = (unsigned char *)(SvPV(ST(i), len));
         if (Update(&ctx, data, len << 3) != SUCCESS)
             XSRETURN_UNDEF;
     }
-    Newx(result, ix >> 3, unsigned char);
     if (Final(&ctx, result) != SUCCESS)
         XSRETURN_UNDEF;
-    RETVAL = newSVpv(result, ix >> 3);
-    Safefree(result);
-OUTPUT:
-    RETVAL
+    ST(0) = make_mortal_sv(aTHX_ result, bitlen, ix % 3);
+    XSRETURN(1);
 
 Digest::Shabal
 new (class, hashsize)
@@ -115,20 +185,21 @@ PPCODE:
         XSRETURN_UNDEF;
     XSRETURN(1);
 
-SV *
+void *
 digest (self)
     Digest::Shabal self
+ALIAS:
+    digest = 0
+    hexdigest = 1
+    b64digest = 2
 PREINIT:
-    unsigned char *result;
+    unsigned char result[64];
 CODE:
-    Newx(result, self->hashbitlen >> 3, unsigned char);
     if (Final(self, result) != SUCCESS)
         XSRETURN_UNDEF;
-    RETVAL = newSVpv(result, self->hashbitlen >> 3);
     Init(self, self->hashbitlen);
-    Safefree(result);
-OUTPUT:
-    RETVAL
+    ST(0) = make_mortal_sv(aTHX_ result, self->hashbitlen, ix);
+    XSRETURN(1);
 
 void
 DESTROY (self)
