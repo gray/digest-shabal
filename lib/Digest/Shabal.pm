@@ -64,7 +64,8 @@ Digest::Shabal - Perl interface to the Shabal digest algorithm
 =head1 DESCRIPTION
 
 The C<Digest::Shabal> module provides an interface to the Shabal message
-digest algorithm. Shabal is a candidate in the NIST SHA-3 competition.
+digest algorithm. Shabal was a candidate in the NIST SHA-3 competition but
+did progress beyond round 2.
 
 This interface follows the conventions set forth by the C<Digest> module.
 
